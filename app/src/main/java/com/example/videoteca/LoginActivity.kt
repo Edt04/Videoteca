@@ -34,6 +34,11 @@ class LoginActivity : AppCompatActivity() {
                 val isUserExist = db.checkUser(username, password)
                 if (isUserExist) {
                     Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                    // Crea un Intent per passare a SecondActivity
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    // Avvia il catalogo
+                    startActivity(intent)
+                    finish()
                 } else {
                     Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show()
                 }

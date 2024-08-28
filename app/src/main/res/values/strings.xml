@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Videoteca</string>
+    <string name="app_name">MyApplication</string>
+    <string name="film_poster">Film Poster</string>
 </resources>

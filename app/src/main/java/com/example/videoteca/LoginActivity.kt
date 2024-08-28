@@ -11,15 +11,15 @@ import androidx.appcompat.app.AppCompatActivity
 
 class LoginActivity : AppCompatActivity() {
 
-    lateinit var  db : DatabaseHelper
-    lateinit var usernameInput : EditText
-    lateinit var passwordInput : EditText
-    lateinit var loginBtn : Button
-    lateinit var register : TextView
+    lateinit var db: DatabaseHelper
+    lateinit var usernameInput: EditText
+    lateinit var passwordInput: EditText
+    lateinit var loginBtn: Button
+    lateinit var register: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        db =  DatabaseHelper(this);
+        db = DatabaseHelper(this);
         usernameInput = findViewById(R.id.username_input)
         passwordInput = findViewById(R.id.password_input)
         loginBtn = findViewById(R.id.login_btn)
@@ -33,22 +33,33 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 val isUserExist = db.checkUser(username, password)
                 if (isUserExist) {
-                    Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
-                    // Crea un Intent per passare a SecondActivity
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    // Avvia il catalogo
-                    startActivity(intent)
-                    finish()
-                } else {
+                    if (username.toLowerCase().contains("admin")) {
+                        Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                        // Crea un Intent per passare a SecondActivity
+                        val intent = Intent(this@LoginActivity, AdminActivity::class.java)
+                        // Avvia il catalogo
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                        // Crea un Intent per passare a SecondActivity
+                        val intent = Intent(this@LoginActivity, UserActivity::class.java)
+                        // Avvia il catalogo
+                        startActivity(intent)
+                        finish()
+
+                    }
+                }else{
                     Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show()
+
                 }
             }
-}
-        register.setOnClickListener {
-            // Crea un Intent per passare a SecondActivity
-            val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
-            // Avvia la SecondActivity
-            startActivity(intent)
+            register.setOnClickListener {
+                // Crea un Intent per passare a SecondActivity
+                val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
+                // Avvia la SecondActivity
+                startActivity(intent)
+            }
         }
-}
+    }
 }

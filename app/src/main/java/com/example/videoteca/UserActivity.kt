@@ -4,19 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.appcompat.widget.SearchView
-import com.example.videoteca.databinding.ActivityMainBinding
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.videoteca.databinding.ActivityUserBinding
 
-class MainActivity : AppCompatActivity() {
-
+class UserActivity :AppCompatActivity() {
     private lateinit var dbHelper: MovieDatabaseHelper
     private lateinit var filmAdapter: FilmAdapter
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityUserBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         dbHelper = MovieDatabaseHelper(this)
@@ -49,12 +48,16 @@ class MainActivity : AppCompatActivity() {
                     loadMovies() // Ricarica tutti i film
                     true
                 }
-                R.id.bottom_add -> {
-                    startActivity(Intent(this, AddFilmActivity::class.java))
+                R.id.bottom_account -> {
+                   //da implementare
                     true
                 }
-                R.id.bottom_delete->{
-                    startActivity(Intent(this,DeleteFilmActivity::class.java))
+                R.id.bottom_news->{
+                    //da implementare
+                    true
+                }
+                R.id.bottom_rentals-> {
+                    //da implementare
                     true
                 }
                 else -> false
@@ -80,3 +83,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+

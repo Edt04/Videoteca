@@ -25,30 +25,6 @@ class AddFilmActivity : AppCompatActivity() {
 
         dbHelper = MovieDatabaseHelper(this)
 
-        // Configura lo Spinner per la selezione delle immagini
-
-        val spinnerAdapter = object : ArrayAdapter<Int>(
-            this,
-            android.R.layout.simple_spinner_item,
-        ) {
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val imageView = ImageView(context)
-                imageView.setImageResource(getItem(position) ?: 0)
-                return imageView
-            }
-
-            override fun getDropDownView(
-                position: Int,
-                convertView: View?,
-                parent: ViewGroup
-            ): View {
-                val imageView = ImageView(context)
-                imageView.setImageResource(getItem(position) ?: 0)
-                return imageView
-            }
-        }
-
-
         binding.btnSave.setOnClickListener {
             val title = binding.etTitle.text.toString()
             val genre = binding.etGenre.text.toString()

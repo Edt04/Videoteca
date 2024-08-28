@@ -32,6 +32,9 @@
         <activity
             android:name=".AddFilmActivity"
             android:exported="true" />
+        <activity
+            android:name=".DeleteFilmActivity"
+            android:exported="true" />
 
 
 

@@ -103,9 +103,9 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
         return movies
     }
 
-    fun deleteMovie(id: Int) {
+    fun deleteMovie(film: String) {
         val db = this.writableDatabase
-        db.delete(TABLE_MOVIES, "$COLUMN_ID = ?", arrayOf(id.toString()))
+        db.delete(TABLE_MOVIES, "$COLUMN_TITLE = ?", arrayOf(film.toString()))
         db.close()
     }
 }

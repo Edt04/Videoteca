@@ -53,6 +53,10 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this, AddFilmActivity::class.java))
                     true
                 }
+                R.id.bottom_delete->{
+                    startActivity(Intent(this,DeleteFilmActivity::class.java))
+                    true
+                }
                 else -> false
             }
         }

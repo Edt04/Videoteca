@@ -7,4 +7,7 @@
         android:id="@+id/bottom_add"
         android:icon="@android:drawable/ic_menu_add"
         android:title="Add Film" />
+    <item android:id="@+id/bottom_delete"
+        android:icon="@android:drawable/ic_delete"
+        android:title="Delete Film"/>
 </menu>

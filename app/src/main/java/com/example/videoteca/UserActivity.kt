@@ -1,5 +1,6 @@
 package com.example.videoteca
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -49,11 +50,11 @@ class UserActivity :AppCompatActivity() {
                     true
                 }
                 R.id.bottom_account -> {
-                   //da implementare
+                    startActivity(Intent(this, AccountActivity::class.java))
                     true
                 }
                 R.id.bottom_news->{
-                    //da implementare
+                    newMovies()//gli ultimi 10 film inseriti
                     true
                 }
                 R.id.bottom_rentals-> {
@@ -80,6 +81,14 @@ class UserActivity :AppCompatActivity() {
             filmAdapter.setMovies(movies)
         } catch (e: Exception) {
             Log.e("MainActivity", "Error searching movies", e)
+        }
+    }
+    private fun newMovies() {
+        try {
+            val movies = dbHelper.getAllNewMovies()
+            filmAdapter.setMovies(movies)
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error loading movies", e)
         }
     }
 }

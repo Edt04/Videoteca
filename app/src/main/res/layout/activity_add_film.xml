@@ -1,55 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddFilmActivity">
+    android:orientation="vertical"
+    android:padding="16dp">
 
+    <!-- Title EditText -->
     <EditText
-        android:id="@+id/etTitle"
-        android:layout_width="0dp"
+        android:id="@+id/titleEditText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:hint="Title"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0" />
+        android:inputType="text"
+        android:textSize="16sp" />
 
+    <!-- Genre EditText -->
     <EditText
-        android:id="@+id/etGenre"
-        android:layout_width="0dp"
+        android:id="@+id/genreEditText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:hint="Genre"
-        app:layout_constraintTop_toBottomOf="@id/etTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0" />
+        android:inputType="text"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp" />
 
+    <!-- Year EditText -->
     <EditText
-        android:id="@+id/etYear"
-        android:layout_width="0dp"
+        android:id="@+id/yearEditText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:hint="Year"
         android:inputType="number"
-        app:layout_constraintTop_toBottomOf="@id/etGenre"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0" />
+        android:textSize="16sp"
+        android:layout_marginTop="8dp" />
 
-    <!-- Spinner per selezionare l'immagine -->
-
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="wrap_content"
+    <!-- Image URL EditText -->
+    <EditText
+        android:id="@+id/imageUrlEditText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Save"
-        app:layout_constraintTop_toBottomOf="@id/etYear"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:hint="Image URL"
+        android:inputType="textUri"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Description EditText -->
+    <EditText
+        android:id="@+id/descriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description"
+        android:inputType="textMultiLine"
+        android:lines="4"
+        android:gravity="top"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp" />
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Movie"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>

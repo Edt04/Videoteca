@@ -15,7 +15,7 @@
     <item
         android:id ="@+id/bottom_news"
         android:icon="@drawable/ic_menu_news"
-        android:title="New"/>
+        android:title="News"/>
 
 
 </menu>

@@ -16,7 +16,6 @@ class AddFilmActivity : AppCompatActivity() {
 
     private lateinit var dbHelper: MovieDatabaseHelper
     private lateinit var binding: ActivityAddFilmBinding
-    private var selectedImageResId: Int = R.drawable.download // ID immagine di default
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,19 +24,26 @@ class AddFilmActivity : AppCompatActivity() {
 
         dbHelper = MovieDatabaseHelper(this)
 
-        binding.btnSave.setOnClickListener {
-            val title = binding.etTitle.text.toString()
-            val genre = binding.etGenre.text.toString()
-            val year = binding.etYear.text.toString().toIntOrNull() ?: 0
+        binding.saveButton.setOnClickListener {
+            val title = binding.titleEditText.text.toString().trim()
+            val genre = binding.genreEditText.text.toString().trim()
+            val year = binding.yearEditText.text.toString().trim().toIntOrNull()
+            val imageUrl = binding.imageUrlEditText.text.toString().trim()
+            val description = binding.descriptionEditText.text.toString().trim()
 
-            if (title.isNotEmpty() && genre.isNotEmpty() && year > 0) {
-                dbHelper.insertMovie(title, genre, year, selectedImageResId, "Default description")
-                Toast.makeText(this, "Film added!", Toast.LENGTH_SHORT).show()
-                finish()
+            if (title.isNotEmpty() && genre.isNotEmpty() && year != null && imageUrl.isNotEmpty() && description.isNotEmpty()) {
+                val success = dbHelper.addMovie(title, genre, year, imageUrl, description)
+                if (success > 0) {
+                    Toast.makeText(this, "Movie added successfully!", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this, "Error adding movie.", Toast.LENGTH_SHORT).show()
+                }
             } else {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please fill all fields.", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 }
 

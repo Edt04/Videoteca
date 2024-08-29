@@ -1,6 +1,5 @@
 package com.example.videoteca
 
-import DatabaseHelper
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -38,7 +37,7 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(this,"The passwords are not the same",Toast.LENGTH_SHORT).show()
             }
             else{
-                val isInserted = db.insertData(username, password)
+                val isInserted = db.insertData(username, password, email)
                 if (isInserted) {
                     Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show()
                 } else {

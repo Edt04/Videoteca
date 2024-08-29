@@ -1,6 +1,6 @@
 package com.example.videoteca
 
-import DatabaseHelper
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -33,6 +33,11 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 val isUserExist = db.checkUser(username, password)
                 if (isUserExist) {
+                    val sharedPref = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        putString("username",username) // Assumendo che `userId` sia l'ID utente recuperato dal database
+                        apply() }
+
                     if (username.toLowerCase().contains("admin")) {
                         Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
                         // Crea un Intent per passare a SecondActivity
@@ -54,11 +59,9 @@ class LoginActivity : AppCompatActivity() {
 
                 }
             }
-            register.setOnClickListener {
+            register.setOnClickListener(){
                 // Crea un Intent per passare a SecondActivity
-                val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
-                // Avvia la SecondActivity
-                startActivity(intent)
+                startActivity(Intent(this, RegisterActivity::class.java))
             }
         }
     }

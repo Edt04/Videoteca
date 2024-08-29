@@ -2,6 +2,7 @@ package com.example.videoteca
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Contacts.Intents
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -28,6 +29,10 @@ class AdminActivity : AppCompatActivity() {
 
         // Carica i film dal database
         loadMovies()
+
+        binding.recyclerView.setOnClickListener{
+            startActivity(Intent(this,DetailActivity::class.java))
+        }
 
         // Configura SearchView
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

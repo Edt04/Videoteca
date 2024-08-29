@@ -3,6 +3,7 @@ package com.example.videoteca
 
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -14,7 +15,24 @@ class FilmAdapter(private var films: List<Film>, private val context: Context) :
     RecyclerView.Adapter<FilmAdapter.FilmViewHolder>() {
 
     inner class FilmViewHolder(val binding: CardFilmBinding) :
-        RecyclerView.ViewHolder(binding.root)
+        RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.root.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val selectedFilm = films[position]
+                    val intent = Intent(context, DetailActivity::class.java).apply {
+                        putExtra("title", selectedFilm.title)
+                        putExtra("genre", selectedFilm.genre)
+                        putExtra("year", selectedFilm.year)
+                        putExtra("imageUrl", selectedFilm.imageUrl)
+                        putExtra("description", selectedFilm.description)
+                    }
+                    context.startActivity(intent)
+                }
+            }
+        }
+}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder {
         val binding = CardFilmBinding.inflate(LayoutInflater.from(parent.context), parent, false)

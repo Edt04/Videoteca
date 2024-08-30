@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/sfondod"
-        android:scaleType="centerCrop"> <!-- Adatta l'immagine, tagliando l'eccesso per riempire lo schermo -->
+        android:scaleType="centerCrop"> <!-- Adatta l'immagine,  -->
     </ImageView>
 
 

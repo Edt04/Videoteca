@@ -1,77 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@color/white">
+    tools:ignore="ExtraText">
 
-    <LinearLayout
+    <!-- Immagine di sfondo -->
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:src="@drawable/sfondod"
+        android:scaleType="centerCrop"> <!-- Adatta l'immagine, tagliando l'eccesso per riempire lo schermo -->
+    </ImageView>
 
-        <!-- Titolo del Film -->
-        <TextView
-            android:id="@+id/filmTitleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Film Title"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:gravity="center_horizontal"
-            android:paddingBottom="8dp" />
 
-        <!-- Immagine del Film -->
-        <ImageView
-            android:id="@+id/filmImageView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/download"
-            android:layout_marginBottom="16dp" />
+    <!-- Contenuto dello ScrollView -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
-        <!-- Contenitore per Genere e Anno -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
+            android:orientation="vertical">
 
-            <!-- Genere del Film -->
+            <!-- Titolo del Film -->
             <TextView
-                android:id="@+id/filmGenreTextView"
-                android:layout_width="0dp"
+                android:id="@+id/filmTitleTextView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Genre"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:gravity="center" />
+                android:text="Film Title"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#FF9100"
+                android:gravity="center_horizontal"
+                android:paddingBottom="8dp" />
 
-            <!-- Anno del Film -->
-            <TextView
-                android:id="@+id/filmYearTextView"
-                android:layout_width="0dp"
+            <!-- Immagine del Film -->
+            <ImageView
+                android:id="@+id/filmImageView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/download"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Contenitore per Genere e Anno -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Year"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:gravity="center" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="16dp">
+
+                <!-- Genere del Film -->
+                <TextView
+                    android:id="@+id/filmGenreTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Genre"
+                    android:textStyle="bold"
+                    android:textSize="25sp"
+                    android:textColor="#FFAB00"
+                    android:gravity="center" />
+
+                <!-- Anno del Film -->
+                <TextView
+                    android:id="@+id/filmYearTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Year"
+                    android:textStyle="bold"
+                    android:textSize="25sp"
+                    android:textColor="#FFAB00"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+            <!-- Descrizione del Film -->
+            <TextView
+                android:id="@+id/filmDescriptionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Film Description"
+                android:textStyle="bold"
+                android:textSize="25sp"
+                android:textColor="@color/white"
+                android:paddingBottom="16dp" />
 
         </LinearLayout>
-
-        <!-- Descrizione del Film -->
-        <TextView
-            android:id="@+id/filmDescriptionTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Film Description"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:paddingBottom="16dp" />
-
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</FrameLayout>

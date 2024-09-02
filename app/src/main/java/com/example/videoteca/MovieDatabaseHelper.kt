@@ -18,6 +18,7 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
         private const val COLUMN_YEAR = "year"
         private const val COLUMN_IMAGE = "image_url"
         private const val COLUMN_DESCRIPTION = "description"
+        private const val  COLUMN_STATE = "state"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -27,12 +28,13 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
                 "$COLUMN_GENRE TEXT," +
                 "$COLUMN_YEAR INTEGER," +
                 "$COLUMN_IMAGE TEXT," +
-                "$COLUMN_DESCRIPTION TEXT)")
+                "$COLUMN_DESCRIPTION TEXT,"+
+                "$COLUMN_STATE INTEGER DEFAULT 1)")
         db?.execSQL(createTable)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_MOVIES")
+        db.execSQL("ALTER TABLE $TABLE_MOVIES ADD COLUMN $COLUMN_STATE INTEGER DEFAULT 1")
         onCreate(db)
     }
 
@@ -45,6 +47,7 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
             put(COLUMN_YEAR, year)
             put(COLUMN_IMAGE, imageUrl)
             put(COLUMN_DESCRIPTION, description)
+            put(COLUMN_STATE,1)
         }
 
         val result = db.insert(TABLE_MOVIES, null, values)
@@ -69,8 +72,8 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
                     genre = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENRE)),
                     year = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_YEAR)),
                     imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
-
+                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
+                    state = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_STATE)) == 1
                 )
                 movies.add(movie)
             } while (cursor.moveToNext())
@@ -99,8 +102,9 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
                     genre = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENRE)),
                     year = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_YEAR)),
                     imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
-                )
+                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
+                    state = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_STATE)) == 1
+                                )
                 movies.add(movie)
             } while (cursor.moveToNext())
         }
@@ -130,7 +134,9 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
                     genre = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENRE)),
                     year = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_YEAR)),
                     imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
+                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
+                    state = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_STATE)) == 1
+
                 )
                 movies.add(movie)
             } while (cursor.moveToNext())
@@ -140,4 +146,23 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
         db.close()
         return movies
     }
+
+    fun changeState(title: String, newState: Boolean): Boolean {
+        val db = this.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(COLUMN_STATE, if (newState) 1 else 0) // Convertiamo il booleano in un intero (1 per true, 0 per false)
+        }
+
+        // Aggiornare la colonna `state` per il film con il titolo specificato
+        val result = db.update(
+            TABLE_MOVIES,
+            contentValues,
+            "$COLUMN_TITLE = ?",
+            arrayOf(title)
+        )
+
+        db.close()
+        return result > 0 // Se una o più righe sono state aggiornate, l'operazione è stata un successo
+    }
+
 }

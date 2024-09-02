@@ -1,6 +1,5 @@
 package com.example.videoteca
 
-import android.media.audiofx.AudioEffect.Descriptor
 
 
 data class Film(
@@ -9,5 +8,6 @@ data class Film(
     val genre: String,
     val year: Int,
     val imageUrl: String,
-    val description:String
+    val description:String,
+    var state: Boolean
 )

@@ -54,12 +54,25 @@
         <!-- Anno del Film -->
         <TextView
             android:id="@+id/movieYearTextView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/movieGenreTextView"
             android:text="Anno"
             android:textColor="@android:color/darker_gray"
             android:textSize="14sp"/>
+
+        <!-- Bottone di Noleggio -->
+        <Button
+            android:id="@+id/rentButton"
+            android:layout_width="78dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="@color/green"
+            android:text="Noleggia"
+            android:textColor="@android:color/white"
+            android:textSize="7sp"
+            android:layout_marginStart="8dp"/>
 
     </RelativeLayout>
 

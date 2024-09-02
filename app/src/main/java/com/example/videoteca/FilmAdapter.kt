@@ -7,13 +7,14 @@ import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.videoteca.databinding.CardFilmBinding
 
-class FilmAdapter(private var films: List<Film>, private val context: Context) :
+class FilmAdapter(private var films: List<Film>,private var db :MovieDatabaseHelper, private val context: Context) :
     RecyclerView.Adapter<FilmAdapter.FilmViewHolder>() {
-
     inner class FilmViewHolder(val binding: CardFilmBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
@@ -40,6 +41,7 @@ class FilmAdapter(private var films: List<Film>, private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
+
         val film = films[position]
         holder.binding.movieTitleTextView.text = film.title
         holder.binding.movieGenreTextView.text = film.genre
@@ -50,7 +52,30 @@ class FilmAdapter(private var films: List<Film>, private val context: Context) :
             .placeholder(R.drawable.download) // Immagine mostrata durante il caricamento
             .error(R.drawable.error) // Immagine mostrata in caso di errore nel caricamento
             .into(holder.binding.movieImageView)
-    }
+        // Cambia il colore del bottone in base allo stato del film
+        if (film.state) {
+            holder.binding.rentButton.text = "AVAILABLE"
+            holder.binding.rentButton.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
+        } else {
+            holder.binding.rentButton.text = "BUSY"
+            holder.binding.rentButton.setBackgroundColor(ContextCompat.getColor(context, R.color.red))
+        }
+
+        // Gestione del clic sul pulsante "Noleggia"
+        holder.binding.rentButton.setOnClickListener {
+            if (film.state) {
+                // Logica per noleggiare il film
+                Toast.makeText(context, "Hai noleggiato ${film.title}", Toast.LENGTH_SHORT).show()
+                // Aggiorna lo stato del film e il colore del bottone
+                film.state = false
+                db.changeState(film.title,film.state)
+           notifyItemChanged(position)
+            } else {
+                Toast.makeText(context, "${film.title} non è disponibile per il noleggio", Toast.LENGTH_SHORT).show()
+            }
+        }
+        }
+
 
     override fun getItemCount() = films.size
 

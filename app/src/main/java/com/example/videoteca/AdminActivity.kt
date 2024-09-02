@@ -21,7 +21,7 @@ class AdminActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         dbHelper = MovieDatabaseHelper(this)
-        filmAdapter = FilmAdapter(emptyList(), this)
+        filmAdapter = FilmAdapter(emptyList(), dbHelper,this)
 
         // Configura RecyclerView
         binding.recyclerView.layoutManager = GridLayoutManager(this, 2)

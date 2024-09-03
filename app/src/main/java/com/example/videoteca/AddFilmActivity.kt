@@ -32,7 +32,7 @@ class AddFilmActivity : AppCompatActivity() {
             val description = binding.descriptionEditText.text.toString().trim()
 
             if (title.isNotEmpty() && genre.isNotEmpty() && year != null && imageUrl.isNotEmpty() && description.isNotEmpty()) {
-                val success = dbHelper.addMovie(title, genre, year, imageUrl, description)
+                val success = dbHelper.addMovie(title, genre, year, imageUrl, description )
                 if (success > 0) {
                     Toast.makeText(this, "Movie added successfully!", Toast.LENGTH_SHORT).show()
                     finish()

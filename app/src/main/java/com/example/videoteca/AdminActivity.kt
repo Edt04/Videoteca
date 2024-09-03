@@ -20,7 +20,7 @@ class AdminActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         dbHelper = MovieDatabaseHelper(this)
-        filmAdapter = FilmAdapter(emptyList(), this)
+        filmAdapter = FilmAdapter(emptyList(), dbHelper,this)
 
         // Configura RecyclerView
         binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
@@ -69,7 +69,7 @@ class AdminActivity : AppCompatActivity() {
     private fun loadMovies() {
         try {
             val movies = dbHelper.getAllMovies()
-            filmAdapter.updateFilms(movies)
+            filmAdapter.setMovies(movies)
         } catch (e: Exception) {
             Log.e("MainActivity", "Error loading movies", e)
         }
@@ -78,7 +78,7 @@ class AdminActivity : AppCompatActivity() {
     private fun searchMovies(query: String) {
         try {
             val movies = dbHelper.searchMovies(query)
-            filmAdapter.updateFilms(movies)
+            filmAdapter.setMovies(movies)
         } catch (e: Exception) {
             Log.e("MainActivity", "Error searching movies", e)
         }

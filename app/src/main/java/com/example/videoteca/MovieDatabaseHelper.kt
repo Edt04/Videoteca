@@ -4,9 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.graphics.Movie
 import android.util.Log
-
 
 class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -20,6 +18,7 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
         private const val COLUMN_YEAR = "year"
         private const val COLUMN_IMAGE = "image_url"
         private const val COLUMN_DESCRIPTION = "description"
+        private const val  COLUMN_STATE = "state"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -29,24 +28,18 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
                 "$COLUMN_GENRE TEXT," +
                 "$COLUMN_YEAR INTEGER," +
                 "$COLUMN_IMAGE TEXT," +
-                "$COLUMN_DESCRIPTION TEXT," +
-                "is_rented INTEGER DEFAULT 0)") // Colonna per indicare se il film è noleggiato
+                "$COLUMN_DESCRIPTION TEXT,"+
+                "$COLUMN_STATE INTEGER DEFAULT 1)")
         db?.execSQL(createTable)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_MOVIES")
+        db.execSQL("ALTER TABLE $TABLE_MOVIES ADD COLUMN $COLUMN_STATE INTEGER DEFAULT 1")
         onCreate(db)
     }
 
-    fun addMovie(
-        title: String,
-        genre: String,
-        year: Int,
-        imageUrl: String,
-        description: String,
-        isRented: Boolean = false
-    ): Long {
+
+    fun addMovie(title: String, genre: String, year: Int, imageUrl: String, description: String): Long {
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(COLUMN_TITLE, title)
@@ -54,7 +47,7 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
             put(COLUMN_YEAR, year)
             put(COLUMN_IMAGE, imageUrl)
             put(COLUMN_DESCRIPTION, description)
-            put("is_rented", if (isRented) 1 else 0) // Gestisce il valore di noleggio
+            put(COLUMN_STATE,1)
         }
 
         val result = db.insert(TABLE_MOVIES, null, values)
@@ -64,19 +57,11 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
         return result
     }
 
-    fun updateMovieRentedStatus(movieId: Int, isRented: Boolean) {
-        val db = this.writableDatabase
-        val values = ContentValues().apply {
-            put("is_rented", if (isRented) 1 else 0)
-        }
-        db.update(TABLE_MOVIES, values, "$COLUMN_ID = ?", arrayOf(movieId.toString()))
-        db.close()
-    }
-
     fun getAllMovies(): List<Film> {
         val movies = mutableListOf<Film>()
         val db = this.readableDatabase
 
+        // Corretto utilizzo di rawQuery
         val cursor = db.rawQuery("SELECT * FROM $TABLE_MOVIES", null)
 
         if (cursor.moveToFirst()) {
@@ -87,7 +72,8 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
                     genre = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENRE)),
                     year = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_YEAR)),
                     imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
+                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
+                    state = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_STATE)) == 1
                 )
                 movies.add(movie)
             } while (cursor.moveToNext())
@@ -102,6 +88,7 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
         val movies = mutableListOf<Film>()
         val db = this.readableDatabase
 
+        // Utilizzo di rawQuery per cercare film
         val cursor = db.rawQuery(
             "SELECT * FROM $TABLE_MOVIES WHERE $COLUMN_TITLE LIKE ? OR $COLUMN_GENRE LIKE ?",
             arrayOf("%$query%", "%$query%")
@@ -115,8 +102,9 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
                     genre = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENRE)),
                     year = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_YEAR)),
                     imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
-                )
+                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
+                    state = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_STATE)) == 1
+                                )
                 movies.add(movie)
             } while (cursor.moveToNext())
         }
@@ -128,16 +116,15 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
 
     fun deleteMovie(film: String) {
         val db = this.writableDatabase
-        db.delete(TABLE_MOVIES, "$COLUMN_TITLE = ?", arrayOf(film))
+        db.delete(TABLE_MOVIES, "$COLUMN_TITLE = ?", arrayOf(film.toString()))
         db.close()
     }
-
-    fun getAllNewMovies(): List<Film> {
+    fun getAllNewMovies():List<Film>{
         val movies = mutableListOf<Film>()
         val db = this.readableDatabase
 
-        val cursor =
-            db.rawQuery("SELECT * FROM $TABLE_MOVIES ORDER BY $COLUMN_ID DESC LIMIT 10", null)
+        // Corretto utilizzo di rawQuery
+        val cursor = db.rawQuery("SELECT * FROM movies ORDER BY $COLUMN_ID DESC LIMIT 10", null)
 
         if (cursor.moveToFirst()) {
             do {
@@ -147,7 +134,9 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
                     genre = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENRE)),
                     year = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_YEAR)),
                     imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
+                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
+                    state = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_STATE)) == 1
+
                 )
                 movies.add(movie)
             } while (cursor.moveToNext())
@@ -158,32 +147,22 @@ class MovieDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
         return movies
     }
 
-    fun getRentedMovies(): List<Film> {
-        val rentedMovies = mutableListOf<Film>()
-        val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $TABLE_MOVIES WHERE is_rented = 1", null)
-
-        if (cursor.moveToFirst()) {
-            do {
-                val movie = Film(
-                    id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-                    title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
-                    genre = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENRE)),
-                    year = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_YEAR)),
-                    imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
-                )
-                rentedMovies.add(movie)
-            } while (cursor.moveToNext())
+    fun changeState(title: String, newState: Boolean): Boolean {
+        val db = this.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(COLUMN_STATE, if (newState) 1 else 0) // Convertiamo il booleano in un intero (1 per true, 0 per false)
         }
 
-        cursor.close()
+        // Aggiornare la colonna `state` per il film con il titolo specificato
+        val result = db.update(
+            TABLE_MOVIES,
+            contentValues,
+            "$COLUMN_TITLE = ?",
+            arrayOf(title)
+        )
+
         db.close()
-        return rentedMovies
+        return result > 0 // Se una o più righe sono state aggiornate, l'operazione è stata un successo
     }
 
-
-    fun searchRentedMovies(query: String) {
-
-    }
 }

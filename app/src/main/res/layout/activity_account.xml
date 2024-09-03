@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/darkGray">
 
     <!-- Immagine del profilo -->
     <ImageView
@@ -20,6 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/profileImageView"
+        android:textColor="@color/white"
         android:text="Username: "
         android:textSize="18sp" />
 
@@ -28,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/usernameTextView"
+        android:textColor="@color/white"
         android:text="Email: "
         android:textSize="18sp" />
 
@@ -62,6 +65,7 @@
         android:id="@+id/changePasswordButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
         android:layout_below="@id/confirmNewPasswordEditText"
         android:layout_marginTop="16dp"
         android:text="Change Password" />
@@ -71,6 +75,7 @@
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
         android:layout_below="@id/changePasswordButton"
         android:layout_marginTop="16dp"
         android:text="Logout" />

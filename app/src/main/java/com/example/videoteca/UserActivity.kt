@@ -1,6 +1,5 @@
 package com.example.videoteca
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +8,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.videoteca.databinding.ActivityUserBinding
 
-class UserActivity :AppCompatActivity() {
+class UserActivity : AppCompatActivity() {
     private lateinit var dbHelper: MovieDatabaseHelper
     private lateinit var filmAdapter: FilmAdapter
     private lateinit var binding: ActivityUserBinding
@@ -53,12 +52,13 @@ class UserActivity :AppCompatActivity() {
                     startActivity(Intent(this, AccountActivity::class.java))
                     true
                 }
-                R.id.bottom_news->{
-                    newMovies()//gli ultimi 10 film inseriti
+                R.id.bottom_news -> {
+                    loadNewMovies() // Gli ultimi 10 film inseriti
                     true
                 }
-                R.id.bottom_rentals-> {
-                    //da implementare
+                R.id.bottom_rentals -> {
+                    // Apri RentalsActivity
+                    startActivity(Intent(this, RentalsActivity::class.java))
                     true
                 }
                 else -> false
@@ -69,27 +69,27 @@ class UserActivity :AppCompatActivity() {
     private fun loadMovies() {
         try {
             val movies = dbHelper.getAllMovies()
-            filmAdapter.setMovies(movies)
+            filmAdapter.updateFilms(movies)
         } catch (e: Exception) {
-            Log.e("MainActivity", "Error loading movies", e)
+            Log.e("UserActivity", "Error loading movies", e)
         }
     }
 
     private fun searchMovies(query: String) {
         try {
             val movies = dbHelper.searchMovies(query)
-            filmAdapter.setMovies(movies)
+            filmAdapter.updateFilms(movies)
         } catch (e: Exception) {
-            Log.e("MainActivity", "Error searching movies", e)
+            Log.e("UserActivity", "Error searching movies", e)
         }
     }
-    private fun newMovies() {
+
+    private fun loadNewMovies() {
         try {
             val movies = dbHelper.getAllNewMovies()
-            filmAdapter.setMovies(movies)
+            filmAdapter.updateFilms(movies)
         } catch (e: Exception) {
-            Log.e("MainActivity", "Error loading movies", e)
+            Log.e("UserActivity", "Error loading new movies", e)
         }
     }
 }
-

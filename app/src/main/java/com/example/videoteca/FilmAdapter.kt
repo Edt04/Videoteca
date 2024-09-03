@@ -1,7 +1,5 @@
 package com.example.videoteca
 
-
-
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -14,13 +12,15 @@ import com.example.videoteca.databinding.CardFilmBinding
 class FilmAdapter(private var films: List<Film>, private val context: Context) :
     RecyclerView.Adapter<FilmAdapter.FilmViewHolder>() {
 
+    private var filteredFilms: List<Film> = films
+
     inner class FilmViewHolder(val binding: CardFilmBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    val selectedFilm = films[position]
+                    val selectedFilm = filteredFilms[position]
                     val intent = Intent(context, DetailActivity::class.java).apply {
                         putExtra("title", selectedFilm.title)
                         putExtra("genre", selectedFilm.genre)
@@ -32,7 +32,7 @@ class FilmAdapter(private var films: List<Film>, private val context: Context) :
                 }
             }
         }
-}
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder {
         val binding = CardFilmBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -40,22 +40,35 @@ class FilmAdapter(private var films: List<Film>, private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
-        val film = films[position]
+        val film = filteredFilms[position]
         holder.binding.movieTitleTextView.text = film.title
         holder.binding.movieGenreTextView.text = film.genre
         holder.binding.movieYearTextView.text = film.year.toString()
         Log.d("FilmAdapter", "Loading image from URL: ${film.imageUrl}")
         Glide.with(context)
-            .load(film.imageUrl) // Assicurati che questo sia il campo giusto e che contenga l'URL
-            .placeholder(R.drawable.download) // Immagine mostrata durante il caricamento
-            .error(R.drawable.error) // Immagine mostrata in caso di errore nel caricamento
+            .load(film.imageUrl)
+            .placeholder(R.drawable.download)
+            .error(R.drawable.error)
             .into(holder.binding.movieImageView)
     }
 
-    override fun getItemCount() = films.size
+    override fun getItemCount() = filteredFilms.size
 
-    fun setMovies(movies: List<Film>) {
-        this.films = movies
+    fun filter(query: String) {
+        filteredFilms = if (query.isEmpty()) {
+            films
+        } else {
+            films.filter { it.title.contains(query, ignoreCase = true) }
+        }
         notifyDataSetChanged()
+    }
+
+    fun updateFilms(newFilms: List<Film>) {
+        films = newFilms
+        filter("") // Reapply filter with empty query to update the view
+    }
+
+    fun updateFilms(newFilms: Unit) {
+        TODO("Not yet implemented")
     }
 }

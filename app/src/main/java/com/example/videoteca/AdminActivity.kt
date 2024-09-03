@@ -2,7 +2,6 @@ package com.example.videoteca
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.Contacts.Intents
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -70,7 +69,7 @@ class AdminActivity : AppCompatActivity() {
     private fun loadMovies() {
         try {
             val movies = dbHelper.getAllMovies()
-            filmAdapter.setMovies(movies)
+            filmAdapter.updateFilms(movies)
         } catch (e: Exception) {
             Log.e("MainActivity", "Error loading movies", e)
         }
@@ -79,7 +78,7 @@ class AdminActivity : AppCompatActivity() {
     private fun searchMovies(query: String) {
         try {
             val movies = dbHelper.searchMovies(query)
-            filmAdapter.setMovies(movies)
+            filmAdapter.updateFilms(movies)
         } catch (e: Exception) {
             Log.e("MainActivity", "Error searching movies", e)
         }

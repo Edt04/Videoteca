@@ -6,34 +6,29 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.videoteca.User
 
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, 2) {
+class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, 1) {
 
     companion object {
         const val DATABASE_NAME = "Login.db"
-        //Tabella users
-        const val TABLE_USERS = "users"
+        const val TABLE_NAME = "users"
         const val COL_1 = "ID"
         const val COL_2 = "USERNAME"
         const val COL_3 = "PASSWORD"
         const val COL_4 = "EMAIL"
-
     }
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
-            "CREATE TABLE $TABLE_USERS (" +
+            "CREATE TABLE $TABLE_NAME (" +
                     "$COL_1 INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "$COL_2 TEXT," +
                     "$COL_3 TEXT," +
                     "$COL_4 TEXT)"
-
-
         )
-
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
         onCreate(db)
     }
 
@@ -44,14 +39,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             put(COL_3, password)
             put(COL_4, email)
         }
-        val result = db.insert(TABLE_USERS, null, contentValues)
+        val result = db.insert(TABLE_NAME, null, contentValues)
         return result != -1L
     }
 
     fun checkUser(username: String, password: String): Boolean {
         val db = this.readableDatabase
         val cursor: Cursor = db.rawQuery(
-            "SELECT * FROM $TABLE_USERS WHERE $COL_2 = ? AND $COL_3 = ?",
+            "SELECT * FROM $TABLE_NAME WHERE $COL_2 = ? AND $COL_3 = ?",
             arrayOf(username, password)
         )
         return cursor.count > 0
@@ -60,7 +55,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     fun getUser(username: String): User? {
         val db = this.readableDatabase
         val cursor = db.query(
-            TABLE_USERS,
+            TABLE_NAME,
             null,
             "$COL_2 = ?",
             arrayOf(username),
@@ -82,7 +77,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     fun validatePassword(username: String, password: String): Boolean {
         val db = this.readableDatabase
         val cursor = db.query(
-            TABLE_USERS,
+            TABLE_NAME,
             arrayOf(COL_3),
             "$COL_2 = ? AND $COL_3 = ?",
             arrayOf(username, password),
@@ -101,8 +96,18 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val values = ContentValues().apply {
             put(COL_3, newPassword)
         }
-        val rowsAffected = db.update(TABLE_USERS, values, "$COL_2= ?", arrayOf(username))
+        val rowsAffected = db.update(TABLE_NAME, values, "$COL_2= ?", arrayOf(username))
         return rowsAffected > 0
+    }
+
+    fun userExists(username: String, email: String): Boolean {
+        val db = this.readableDatabase
+        val query = "SELECT * FROM users WHERE username = ? OR email = ?"
+        val cursor = db.rawQuery(query, arrayOf(username, email))
+
+        val exists = cursor.count > 0
+        cursor.close()
+        return exists
     }
 
 

@@ -69,7 +69,7 @@ class UserActivity : AppCompatActivity() {
     private fun loadMovies() {
         try {
             val movies = dbHelper.getAllMovies()
-            filmAdapter.updateFilms(movies)
+            filmAdapter.setMovies(movies)
         } catch (e: Exception) {
             Log.e("UserActivity", "Error loading movies", e)
         }
@@ -78,7 +78,7 @@ class UserActivity : AppCompatActivity() {
     private fun searchMovies(query: String) {
         try {
             val movies = dbHelper.searchMovies(query)
-            filmAdapter.updateFilms(movies)
+            filmAdapter.setMovies(movies)
         } catch (e: Exception) {
             Log.e("UserActivity", "Error searching movies", e)
         }
@@ -87,7 +87,7 @@ class UserActivity : AppCompatActivity() {
     private fun loadNewMovies() {
         try {
             val movies = dbHelper.getAllNewMovies()
-            filmAdapter.updateFilms(movies)
+            filmAdapter.setMovies(movies)
         } catch (e: Exception) {
             Log.e("UserActivity", "Error loading new movies", e)
         }

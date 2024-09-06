@@ -35,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
                 if (isUserExist) {
                     val sharedPref = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
                     with(sharedPref.edit()) {
-                        putString("username",username) // Assumendo che `userId` sia l'ID utente recuperato dal database
+                        putString("username",username)
                         apply() }
 
                     if (username.toLowerCase().contains("admin")) {

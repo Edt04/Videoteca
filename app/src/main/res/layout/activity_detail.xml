@@ -86,8 +86,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Film Description"
-                android:textStyle="bold"
-                android:textSize="25sp"
+                android:textStyle="italic"
+                android:textSize="18sp"
+                android:justificationMode="inter_word"
                 android:textColor="@color/white"
                 android:paddingBottom="16dp" />
 

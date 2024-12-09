@@ -10,4 +10,8 @@
     <item android:id="@+id/bottom_delete"
         android:icon="@android:drawable/ic_delete"
         android:title="Delete Film"/>
+    <item
+        android:id ="@+id/bottom_account"
+        android:icon="@drawable/icon_account_circle"
+        android:title="Account"/>
 </menu>

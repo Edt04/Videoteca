@@ -1,61 +1,64 @@
 package com.example.videoteca
 
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.videoteca.databinding.ActivityRegisterBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
 
-    lateinit var db : DatabaseHelper
-    lateinit var username: EditText
-    lateinit var password: EditText
-    lateinit var passwordConfirm : EditText
-    lateinit var email : EditText
-    lateinit var registerBtn : Button
+    private lateinit var binding: ActivityRegisterBinding
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
-        db = DatabaseHelper(this)
-        username = findViewById(R.id.username)
-        email = findViewById(R.id.editTextEmail)
-        password = findViewById(R.id.editTextPassword)
-        passwordConfirm = findViewById(R.id.editTextConfirmPassword)
-        registerBtn = findViewById(R.id.register_btn)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        registerBtn.setOnClickListener {
-            val usernameText = username.text.toString()
-            val passwordText = password.text.toString()
-            val confirmPasswordText = passwordConfirm.text.toString()
-            val emailText = email.text.toString()
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
-            // Controllo se i campi sono vuoti
-            if (usernameText.isEmpty() || passwordText.isEmpty() || emailText.isEmpty()) {
-                Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
+        binding.registerBtn.setOnClickListener {
+            val email = binding.editTextEmail.text.toString()
+            val password = binding.editTextPassword.text.toString()
+            val confirmPassword = binding.editTextConfirmPassword.toString()
+            val username = binding.username.text.toString()
 
-                // Controllo che le password coincidano
-            } else if (passwordText != confirmPasswordText) {
-                Toast.makeText(this, "The passwords are not the same", Toast.LENGTH_SHORT).show()
+            if (email.isNotEmpty() && password.isNotEmpty() && username.isNotEmpty()) {
+                if(password.equals(confirmPassword)){
+                    Toast.makeText(this, "Password are not the same", Toast.LENGTH_SHORT).show()
 
-                // Controllo che l'email contenga il simbolo "@"
-            } else if (!emailText.contains("@")) {
-                Toast.makeText(this, "Please enter a valid email", Toast.LENGTH_SHORT).show()
-
-                // Controllo se l'username o l'email esistono già nel database
-            } else if (db.userExists(usernameText, emailText)) {
-                Toast.makeText(this, "Username or email already exists", Toast.LENGTH_SHORT).show()
-
-                // Se tutto è valido, inserisco l'utente nel database
-            } else {
-                val isInserted = db.insertData(usernameText, passwordText, emailText)
-                if (isInserted) {
-                    Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Registration Failed", Toast.LENGTH_SHORT).show()
                 }
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val userId = auth.currentUser?.uid
+                            val user = hashMapOf(
+                                "username" to username,
+                                "email" to email
+                            )
+
+                            firestore.collection("users").document(userId!!)
+                                .set(user)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, LoginActivity::class.java))
+                                    finish()
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(this, "Firestore error: ${e.message}", Toast.LENGTH_LONG).show()
+                                }
+                        } else {
+                            Toast.makeText(this, "Registration failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                        }
+                    }
+            } else {
+                Toast.makeText(this, "Please fill out all fields", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -1,44 +1,32 @@
-package   com.example.videoteca
+package com.example.videoteca
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.videoteca.LoginActivity
 import com.example.videoteca.databinding.ActivityAccountBinding
-import com.example.videoteca.databinding.ActivityAddFilmBinding
-
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AccountActivity : AppCompatActivity() {
 
-    private lateinit var dbHelper: DatabaseHelper
     private lateinit var binding: ActivityAccountBinding
+    private lateinit var auth: FirebaseAuth
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAccountBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dbHelper = DatabaseHelper(this)
-        val sharedPref = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        val username = sharedPref.getString("username", null)
+        auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
 
-
-
-
-        if (username != null) {
-            loadUserProfile(username)
+        if (currentUser != null) {
+            loadUserProfile(currentUser.uid)
         } else {
-            Toast.makeText(this, "Username non trovato", Toast.LENGTH_SHORT).show()
-            // Possibile reindirizzamento al LoginActivity
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+            Toast.makeText(this, "Utente non autenticato", Toast.LENGTH_SHORT).show()
+            redirectToLogin()
         }
 
         binding.changePasswordButton.setOnClickListener {
@@ -46,8 +34,8 @@ class AccountActivity : AppCompatActivity() {
             val newPassword = binding.newPasswordEditText.text.toString()
             val confirmNewPassword = binding.confirmNewPasswordEditText.text.toString()
 
-            if (validatePasswordChange(username.toString(), currentPassword, newPassword, confirmNewPassword)) {
-                changePassword(username.toString(), newPassword)
+            if (validatePasswordChange(currentPassword, newPassword, confirmNewPassword)) {
+                changePassword(newPassword)
             }
         }
 
@@ -56,19 +44,27 @@ class AccountActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadUserProfile(username: String) {
-        val user = dbHelper.getUser(username)
-        if (user != null) {
-            binding.usernameTextView.text = "Username: ${user.username}"
-            binding.emailTextView.text = "Email: ${user.email}"
-            // Imposta un'immagine del profilo se disponibile
-            // profileImageView.setImageResource(R.drawable.ic_profile_placeholder) // Placeholder
-        } else {
-            Toast.makeText(this, "Utente non trovato", Toast.LENGTH_SHORT).show()
-        }
+    private fun loadUserProfile(userId: String) {
+        db.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val username = document.getString("username") ?: "N/A"
+                    val email = document.getString("email") ?: "N/A"
+
+                    binding.usernameTextView.text = "Username: $username"
+                    binding.emailTextView.text = "Email: $email"
+                } else {
+                    Toast.makeText(this, "Utente non trovato", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Errore durante il caricamento del profilo", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+            }
     }
 
-    private fun validatePasswordChange(username: String, currentPassword: String, newPassword: String, confirmNewPassword: String): Boolean {
+    private fun validatePasswordChange(currentPassword: String, newPassword: String, confirmNewPassword: String): Boolean {
         return when {
             currentPassword.isEmpty() -> {
                 Toast.makeText(this, "Inserisci la password attuale", Toast.LENGTH_SHORT).show()
@@ -86,28 +82,28 @@ class AccountActivity : AppCompatActivity() {
                 Toast.makeText(this, "Le nuove password non coincidono", Toast.LENGTH_SHORT).show()
                 false
             }
-            !dbHelper.validatePassword(username, currentPassword) -> {
-                Toast.makeText(this, "La password attuale è errata", Toast.LENGTH_SHORT).show()
-                false
-            }
             else -> true
         }
     }
 
-    private fun changePassword(username: String, newPassword: String) {
-        if (dbHelper.updatePassword(username, newPassword)) {
-            Toast.makeText(this, "Password cambiata con successo", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Errore durante il cambiamento della password", Toast.LENGTH_SHORT).show()
-        }
+    private fun changePassword(newPassword: String) {
+        val user = auth.currentUser
+        user?.updatePassword(newPassword)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Password cambiata con successo", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Errore durante il cambiamento della password", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
     private fun logout() {
-        val sharedPref = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            remove("username")
-            apply()
-        }
+        auth.signOut()
+        redirectToLogin()
+    }
+
+    private fun redirectToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()

@@ -1,68 +1,73 @@
 package com.example.videoteca
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.videoteca.databinding.ActivityLoginBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
-    lateinit var db: DatabaseHelper
-    lateinit var usernameInput: EditText
-    lateinit var passwordInput: EditText
-    lateinit var loginBtn: Button
-    lateinit var register: TextView
+    private lateinit var binding: ActivityLoginBinding
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-        db = DatabaseHelper(this);
-        usernameInput = findViewById(R.id.username_input)
-        passwordInput = findViewById(R.id.password_input)
-        loginBtn = findViewById(R.id.login_btn)
-        register = findViewById(R.id.rg_text)
-        loginBtn.setOnClickListener {
-            val username = usernameInput.text.toString()
-            val password = passwordInput.text.toString()
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-            if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
-            } else {
-                val isUserExist = db.checkUser(username, password)
-                if (isUserExist) {
-                    val sharedPref = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-                    with(sharedPref.edit()) {
-                        putString("username",username)
-                        apply() }
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()  // Inizializza Firestore
 
-                    if (username.toLowerCase().contains("admin")) {
-                        Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
-                        // Crea un Intent per passare a SecondActivity
-                        val intent = Intent(this@LoginActivity, AdminActivity::class.java)
-                        // Avvia il catalogo
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
-                        // Crea un Intent per passare a SecondActivity
-                        val intent = Intent(this@LoginActivity, UserActivity::class.java)
-                        // Avvia il catalogo
-                        startActivity(intent)
-                        finish()
+        binding.loginBtn.setOnClickListener {
+            val username = binding.usernameInput.text.toString()
+            val password = binding.passwordInput.text.toString()
 
+            if (username.isNotEmpty() && password.isNotEmpty()) {
+                auth.signInWithEmailAndPassword(username, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            isAdmin(username) { isAdmin ->
+                                if (isAdmin) {
+                                    startActivity(Intent(this, AdminActivity::class.java))
+                                } else {
+                                    startActivity(Intent(this, UserActivity::class.java))
+                                }
+                                finish()
+                            }
+                        } else {
+                            Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                        }
                     }
-                }else{
-                    Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show()
-
-                }
-            }
-            register.setOnClickListener(){
-                // Crea un Intent per passare a SecondActivity
-                startActivity(Intent(this, RegisterActivity::class.java))
+            } else {
+                Toast.makeText(this, "Please fill out all fields", Toast.LENGTH_SHORT).show()
             }
         }
+
+        binding.rgText.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
+    }
+
+    // Funzione che verifica se l'email è presente nella raccolta admin
+    private fun isAdmin(email: String, callback: (Boolean) -> Unit) {
+        db.collection("admin")
+            .whereEqualTo("email", email)  // Ricerca per email nella raccolta "admin"
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    callback(false)  // L'utente non è trovato, non è un admin
+                } else {
+                    callback(true)  // L'utente è trovato, è un admin
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("LoginActivity", "Error checking admin status", e)
+                callback(false)  // In caso di errore, si assume che l'utente non sia un admin
+            }
     }
 }

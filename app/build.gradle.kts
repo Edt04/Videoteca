@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -41,9 +42,16 @@ android {
 }
 
 dependencies {
+
+    implementation ("androidx.work:work-runtime-ktx:2.8.1")
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+    implementation ("com.google.firebase:firebase-auth")
+    implementation ("com.google.firebase:firebase-firestore")
+    implementation ("com.google.firebase:firebase-storage")
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.firebase.database)
     kapt("com.github.bumptech.glide:compiler:4.15.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -41,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/emailTextView"
         android:layout_marginTop="16dp"
+        android:textColorHint="@color/white"
         android:hint="Current Password"
         android:inputType="textPassword" />
 
@@ -48,6 +49,7 @@
         android:id="@+id/newPasswordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/white"
         android:layout_below="@id/currentPasswordEditText"
         android:hint="New Password"
         android:inputType="textPassword" />
@@ -56,6 +58,7 @@
         android:id="@+id/confirmNewPasswordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/white"
         android:layout_below="@id/newPasswordEditText"
         android:hint="Confirm New Password"
         android:inputType="textPassword" />

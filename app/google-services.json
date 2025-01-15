@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "40520398113",
+    "project_id": "videoteca-183d2",
+    "storage_bucket": "videoteca-183d2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40520398113:android:3218166d069e939ea97a60",
+        "android_client_info": {
+          "package_name": "com.example.videoteca"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDD3mOQktfU09Erag1E0GxuuBxhTKzjJVE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
